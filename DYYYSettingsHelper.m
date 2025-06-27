@@ -565,6 +565,42 @@ static void showIconOptionsDialog(NSString *title, UIImage *previewImage, NSStri
 }
 
 + (void)showUserAgreementAlert {
+    UIViewController *rootVC = UIApplication.sharedApplication.keyWindow.rootViewController;
+    while (rootVC.presentedViewController) {
+        rootVC = rootVC.presentedViewController;
+    }
+
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"用户协议"
+                                                                             message:@"本插件为开源项目\n仅供学习交流用途\n如有侵权请联系, GitHub 仓库：Wtrwx/DYYY\n请遵守当地法律法规, 逆向工程仅为学习目的\n盗用源码进行商业用途/发布但未标记开源项目必究\n详情请参阅项目内 MIT 许可证\n\n请输入\"我已阅读并同意继续使用\"以继续使用"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    }];
+
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSString *inputText = alertController.textFields.firstObject.text;
+        if ([inputText isEqualToString:@"我已阅读并同意继续使用"]) {
+            [self setUserDefaults:@"YES" forKey:@"DYYYUserAgreementAccepted"];
+        } else {
+            [DYYYUtils showToast:@"请正确输入内容"];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self showUserAgreementAlert];
+            });
+        }
+    }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            exit(0);
+        }];
+
+    [alertController addAction:confirmAction];
+    [alertController addAction:cancelAction];
+
+    [rootVC presentViewController:alertController animated:YES completion:nil];
+}
+
+/* + (void)showUserAgreementAlert {
     [self showTextInputAlert:@"用户协议" defaultText:@"" placeholder:@"" onConfirm:^(NSString *text) {
         if ([text isEqualToString:@"我已阅读并同意继续使用"]) {
             [self setUserDefaults:@"YES" forKey:@"DYYYUserAgreementAccepted"];
@@ -578,6 +614,6 @@ static void showIconOptionsDialog(NSString *title, UIImage *previewImage, NSStri
             exit(0);
         });
     }];
-}
+} */
 
 @end
