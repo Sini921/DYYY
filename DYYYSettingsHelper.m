@@ -585,6 +585,48 @@ static void showIconOptionsDialog(NSString *title, UIImage *previewImage, NSStri
 }
 
 + (void)showUserAgreementAlert {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"用户协议"
+                                                                             message:@"本插件为开源项目\n仅供学习交流用途\n如有侵权请联系, GitHub 仓库：Wtrwx/DYYY\n请遵守当地法律法规, 逆向工程仅为学习目的\n盗用源码进行商业用途/发布但未标记开源项目必究\n详情请参阅项目内 MIT 许可证\n\n请输入\"我已阅读并同意继续使用\"以继续使用"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    }];
+
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *textField = alertController.textFields.firstObject;
+        NSString *inputText = textField.text;
+
+        if ([inputText isEqualToString:@"我已阅读并同意继续使用"]) {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"DYYYUserAgreementAccepted"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        } else {
+            UIAlertController *errorAlert = [UIAlertController alertControllerWithTitle:@"输入错误"
+                                                                               message:@"请正确输入"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+
+            UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self showUserAgreementAlert];
+            }];
+
+            [errorAlert addAction:okAction];
+            UIViewController *rootVC = [UIApplication sharedApplication].keyWindow.rootViewController;
+            [rootVC presentViewController:errorAlert animated:YES completion:nil];
+        }
+    }];
+
+    UIAlertAction *exitAction = [UIAlertAction actionWithTitle:@"退出" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        exit(0);
+    }];
+
+    [alertController addAction:confirmAction];
+    [alertController addAction:exitAction];
+
+    UIViewController *rootVC = [UIApplication sharedApplication].keyWindow.rootViewController;
+    [rootVC presentViewController:alertController animated:YES completion:nil];
+}
+
+/*+ (void)showUserAgreementAlert {
     [self showTextInputAlert:@"用户协议" defaultText:@"" placeholder:@"" onConfirm:^(NSString *text) {
         if ([text isEqualToString:@"我已阅读并同意继续使用"]) {
             [self setUserDefaults:@"YES" forKey:@"DYYYUserAgreementAccepted"];
@@ -598,6 +640,6 @@ static void showIconOptionsDialog(NSString *title, UIImage *previewImage, NSStri
             exit(0);
         });
     }];
-}
+} */
 
 @end
