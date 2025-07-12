@@ -684,7 +684,7 @@
 
 %end
 
-%group DYYYSettingsGesture
+/* %group DYYYSettingsGesture
 
 %hook UIWindow
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -755,7 +755,7 @@
 }
 %end
 
-%end
+%end */
 
 %hook AWEBaseListViewController
 - (void)viewDidLayoutSubviews {
@@ -6273,7 +6273,7 @@ static NSString *const kStreamlineSidebarKey = @"DYYYHideSidebarElements";
 }
 
 %ctor {
-    %init(DYYYSettingsGesture);
+    // %init(DYYYSettingsGesture);
     if (DYYYGetBool(@"DYYYUserAgreementAccepted")) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
