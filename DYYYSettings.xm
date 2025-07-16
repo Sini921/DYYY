@@ -96,10 +96,10 @@ void *kViewModelKey = &kViewModelKey;
 
 %hook AWELeftSideBarEntranceView
 - (void)leftSideBarEntranceViewTapped:(UITapGestureRecognizer *)gesture {
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEntrance"]) {
+    /* if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEntrance"]) {
         %orig;
         return;
-    }
+    } */
 
     UIViewController *feedVC = [DYYYSettingsHelper findViewController:self];
     if (![feedVC isKindOfClass:%c(AWEFeedContainerViewController)]) {
@@ -134,9 +134,16 @@ extern "C"
     showDYYYSettingsVC(UIViewController *rootVC, BOOL hasAgreed) {
     AWESettingBaseViewController *settingsVC = [[%c(AWESettingBaseViewController) alloc] init];
     if (!hasAgreed) {
-        [DYYYSettingsHelper showAboutDialog:@"用户协议"
-                                    message:@"本插件为开源项目\n仅供学习交流用途\n如有侵权请联系, GitHub 仓库：huami1314/DYYY\n请遵守当地法律法规, "
-                                            @"逆向工程仅为学习目的\n盗用源码进行商业用途/发布但未标记开源项目必究\n详情请参阅项目内 MIT 许可证\n\n请输入\"我已阅读并同意继续使用\"以继续"
+      [DYYYSettingsHelper showAboutDialog:@"关于DYYY"
+                                  message:@"版本: " DYYY_VERSION @"\n\n"
+                                          @"感谢使用DYYY\n\n"
+                                          @"感谢huami开源\n\n"
+                                          @"@维他入我心 基于DYYY二次开发\n\n"
+                                          @"感谢huami group中群友的支持赞助\n\n"
+                                          @"Telegram @huamidev\n\n"
+                                          @"Telegram @vita_app\n\n"
+                                          @"开源地址 huami1314/DYYY\n\n"
+                                          @"仓库地址 Wtrwx/DYYY\n\n"
                                   onConfirm:^{
                                     [DYYYSettingsHelper showUserAgreementAlert];
                                   }];
@@ -2468,14 +2475,14 @@ extern "C"
       // 【交互增强】分类
       NSMutableArray<AWESettingItemModel *> *interactionItems = [NSMutableArray array];
       NSArray *interactionSettings = @[
-          @{
+          /* @{
               @"identifier" : @"DYYYEntrance",
               @"title" : @"左侧边栏快捷入口",
               @"subTitle" : @"将侧边栏替换为 DYYY 快捷入口",
               @"detail" : @"",
               @"cellType" : @37,
               @"imageName" : @"ic_circlearrowin_outlined_20"
-          },
+          }, */
           @{
               @"identifier" : @"DYYYDisableSidebarGesture",
               @"title" : @"禁止侧滑进入边栏",
