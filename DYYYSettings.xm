@@ -54,24 +54,34 @@ void *kViewModelKey = &kViewModelKey;
 }
 
 - (void)drawTextInRect:(CGRect)rect {
+    NSString *originalText = self.text;
+    self.text = @" ";
+    %orig;
+    self.text = originalText;
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextClearRect(context, rect);
-
-    NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12.0], NSForegroundColorAttributeName : self.textColor};
-    [@"DYYY" drawInRect:rect withAttributes:attributes];
+    
+    UIFont *font = self.font ?: [UIFont systemFontOfSize:16.0];
+    if (self.font) {
+        font = [self.font fontWithSize:16.0];
+    }
+    
+    NSDictionary *attributes = @{
+        NSFontAttributeName : font,
+        NSForegroundColorAttributeName : self.textColor ?: [UIColor blackColor]
+    };
+    
+    NSString *displayText = @"DYYY";
+    CGSize textSize = [displayText sizeWithAttributes:attributes];
+    CGFloat centerY = (rect.size.height - textSize.height) / 2.0;
+    CGRect centeredRect = CGRectMake(0, centerY, rect.size.width, textSize.height);
+    
+    [displayText drawInRect:centeredRect withAttributes:attributes];
 }
 %end
 
 %hook AWELeftSideBarWeatherView
-- (void)didMoveToSuperview {
-    %orig;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-      CGRect frame = self.frame;
-      frame.origin.y += 10;
-      self.frame = frame;
-    });
-}
-
 - (void)layoutSubviews {
     %orig;
     self.userInteractionEnabled = YES;
@@ -88,6 +98,9 @@ void *kViewModelKey = &kViewModelKey;
         [subview.subviews enumerateObjectsUsingBlock:^(UIView *childView, NSUInteger idx, BOOL *stop) {
           if (![childView isKindOfClass:%c(AWELeftSideBarWeatherLabel)]) {
               [childView removeFromSuperview];
+          } else {
+              CGRect parentFrame = childView.superview.bounds;
+              childView.frame = parentFrame;
           }
         }];
     }
@@ -1217,8 +1230,9 @@ extern "C"
             @"imageName" : @"ic_eyeslash_outlined_16"},
           @{@"identifier" : @"DYYYHideTemplateGroup",
             @"title" : @"隐藏底部话题",
+            @"subTitle" : @"隐藏文案底部出现的话题",
             @"detail" : @"",
-            @"cellType" : @6,
+            @"cellType" : @37,
             @"imageName" : @"ic_eyeslash_outlined_16"},
           @{@"identifier" : @"DYYYHideCameraLocation",
             @"title" : @"隐藏相机定位",
@@ -1238,7 +1252,7 @@ extern "C"
           @{
               @"identifier" : @"DYYYHideLiveCapsuleView",
               @"title" : @"隐藏直播提示",
-              @"subTitle" : @"隐藏关注顶栏的直播中提示",
+              @"subTitle" : @"隐藏所有的直播中提示",
               @"detail" : @"",
               @"cellType" : @37,
               @"imageName" : @"ic_eyeslash_outlined_16"
@@ -1689,10 +1703,10 @@ extern "C"
             @"detail" : @"",
             @"cellType" : @6,
             @"imageName" : @"ic_xmark_outlined_20"},
-          @{@"identifier" : @"DYYYHideOtherChannel",
-            @"title" : @"移除顶栏其他",
+          @{@"identifier" : @"DYYYHideMediumVideo",
+            @"title" : @"移除长视频",
             @"detail" : @"",
-            @"cellType" : @26,
+            @"cellType" : @6,
             @"imageName" : @"ic_xmark_outlined_20"}
       ];
 
@@ -1718,37 +1732,11 @@ extern "C"
             }
           };
           [removeSettingsItems addObject:item];
-
-          if ([item.identifier isEqualToString:@"DYYYHideOtherChannel"]) {
-              NSString *savedValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYHideOtherChannel"];
-              item.detail = savedValue ?: @"";
-              item.cellTappedBlock = ^{
-                // 将保存的逗号分隔字符串转换为数组
-                NSString *savedKeywords = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYHideOtherChannel"] ?: @"";
-                NSArray *keywordArray = [savedKeywords length] > 0 ? [savedKeywords componentsSeparatedByString:@","] : @[];
-
-                // 创建并显示关键词列表视图
-                DYYYKeywordListView *keywordListView = [[DYYYKeywordListView alloc] initWithTitle:@"设置过滤其他顶栏" keywords:keywordArray];
-
-                // 设置确认回调
-                keywordListView.onConfirm = ^(NSArray *keywords) {
-                  // 将关键词数组转换为逗号分隔的字符串
-                  NSString *keywordString = [keywords componentsJoinedByString:@","];
-                  [DYYYSettingsHelper setUserDefaults:keywordString forKey:@"DYYYHideOtherChannel"];
-                  item.detail = keywordString;
-                  [item refreshCell];
-                };
-
-                // 显示关键词列表视图
-                [keywordListView show];
-              };
-          }
       }
 
       NSMutableArray *sections = [NSMutableArray array];
       [sections addObject:[DYYYSettingsHelper createSectionWithTitle:@"顶栏选项" items:removeSettingsItems]];
 
-      // 创建并推入二级设置页面，使用sections数组而不是直接使用removeSettingsItems
       AWESettingBaseViewController *subVC = [DYYYSettingsHelper createSubSettingsViewController:@"顶栏移除" sections:sections];
       [rootVC.navigationController pushViewController:(UIViewController *)subVC animated:YES];
     };
