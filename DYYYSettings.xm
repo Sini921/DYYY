@@ -106,10 +106,10 @@ void *kViewModelKey = &kViewModelKey;
 
 %hook AWELeftSideBarEntranceView
 - (void)leftSideBarEntranceViewTapped:(UITapGestureRecognizer *)gesture {
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEntrance"]) {
+    /* if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEntrance"]) {
         %orig;
         return;
-    }
+    } */
 
     UIViewController *feedVC = [DYYYSettingsHelper findViewController:self];
     if (![feedVC isKindOfClass:%c(AWEFeedContainerViewController)]) {
@@ -2529,14 +2529,14 @@ extern "C"
       // 【交互增强】分类
       NSMutableArray<AWESettingItemModel *> *interactionItems = [NSMutableArray array];
       NSArray *interactionSettings = @[
-          @{
+          /* @{
               @"identifier" : @"DYYYEntrance",
               @"title" : @"左侧边栏快捷入口",
               @"subTitle" : @"将侧边栏替换为 DYYY 快捷入口",
               @"detail" : @"",
               @"cellType" : @37,
               @"imageName" : @"ic_circlearrowin_outlined_20"
-          },
+          }, */
           @{
               @"identifier" : @"DYYYDisableSidebarGesture",
               @"title" : @"禁止侧滑进入边栏",
