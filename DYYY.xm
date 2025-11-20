@@ -757,7 +757,7 @@ static UIImage *DYYYLoadCustomImage(NSString *fileName, CGSize targetSize) {
 
 %end
 
-%group DYYYSettingsGesture
+/* %group DYYYSettingsGesture
 
 %hook UIWindow
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -843,7 +843,7 @@ static UIImage *DYYYLoadCustomImage(NSString *fileName, CGSize targetSize) {
 }
 %end
 
-%end
+%end */
 
 %hook AWEBaseListViewController
 - (void)viewDidLayoutSubviews {
@@ -7097,7 +7097,7 @@ static void findTargetViewInView(UIView *view) {
 }
 
 %ctor {
-    %init(DYYYSettingsGesture);
+    // %init(DYYYSettingsGesture);
     if (DYYYGetBool(@"DYYYUserAgreementAccepted")) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
