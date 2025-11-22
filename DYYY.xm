@@ -176,6 +176,19 @@ static UIImage *DYYYLoadCustomImage(NSString *fileName, CGSize targetSize) {
     return resultImage;
 }
 
+static BOOL DYYYShouldHandleSpeedFeatures(void) {
+    if (isFloatSpeedButtonEnabled) {
+        return YES;
+    }
+
+    float defaultSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYDefaultSpeed"];
+    if (defaultSpeed <= 0.0f) {
+        return NO;
+    }
+
+    return fabsf(defaultSpeed - 1.0f) > FLT_EPSILON;
+}
+
 // 关闭不可见水印
 %hook AWEHPChannelInvisibleWaterMarkModel
 
@@ -4277,6 +4290,11 @@ static CGFloat DYYYDesiredMTKViewShiftOffset(UIView *view) {
     if (!DYYYIsLandscapeVideoBounds(view.bounds.size)) {
         return 0.0f;
     }
+    CGFloat viewWidth = CGRectGetWidth(view.bounds);
+    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+    if (viewWidth < screenWidth * 0.995f) {
+        return 0.0f;
+    }
     CGFloat tabHeight = DYYYCurrentTabHeight();
     if (tabHeight <= 0.0f) {
         return 0.0f;
@@ -5973,6 +5991,9 @@ void applyGlobalTransparency(id targetObject) {
 
 - (void)setIsAutoPlay:(BOOL)arg0 {
     %orig(arg0);
+    if (!DYYYShouldHandleSpeedFeatures()) {
+        return;
+    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
           float defaultSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYDefaultSpeed"];
@@ -5993,6 +6014,9 @@ void applyGlobalTransparency(id targetObject) {
 
 - (void)prepareForDisplay {
     %orig;
+    if (!DYYYShouldHandleSpeedFeatures()) {
+        return;
+    }
 
     BOOL autoRestoreSpeed = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYAutoRestoreSpeed"];
     if (autoRestoreSpeed) {
@@ -6035,6 +6059,9 @@ void applyGlobalTransparency(id targetObject) {
 
 - (void)setIsAutoPlay:(BOOL)arg0 {
     %orig(arg0);
+    if (!DYYYShouldHandleSpeedFeatures()) {
+        return;
+    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
           float defaultSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYDefaultSpeed"];
@@ -6055,6 +6082,9 @@ void applyGlobalTransparency(id targetObject) {
 
 - (void)prepareForDisplay {
     %orig;
+    if (!DYYYShouldHandleSpeedFeatures()) {
+        return;
+    }
     BOOL autoRestoreSpeed = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYAutoRestoreSpeed"];
     if (autoRestoreSpeed) {
         setCurrentSpeedIndex(0);
