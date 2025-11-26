@@ -188,7 +188,7 @@ static const void *kCurrentIPRequestCityCodeKey = &kCurrentIPRequestCityCodeKey;
 + (UIWindow *)getActiveWindow {
     UIWindow *fallbackWindow = [UIApplication sharedApplication].keyWindow ?: [UIApplication sharedApplication].delegate.window ?: [UIApplication sharedApplication].windows.firstObject;
 
-    if (@available(iOS 13.0, *)) {
+    // if (@available(iOS 13.0, *)) {
         UIWindowScene *activeScene = nil, *inactiveScene = nil;
         for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
             if ([scene isKindOfClass:[UIWindowScene class]]) {
@@ -206,9 +206,9 @@ static const void *kCurrentIPRequestCityCodeKey = &kCurrentIPRequestCityCodeKey;
 
         UIWindowScene *targetScene = activeScene ?: inactiveScene;
         if (targetScene) {
-            if (@available(iOS 15.0, *)) {
+           //  if (@available(iOS 15.0, *)) {
                 return targetScene.keyWindow ?: targetScene.windows.firstObject ?: fallbackWindow;
-            } else {
+            /* } else {
                 UIWindow *firstVisibleWindow = nil;
 
                 for (UIWindow *window in targetScene.windows) {
@@ -220,9 +220,9 @@ static const void *kCurrentIPRequestCityCodeKey = &kCurrentIPRequestCityCodeKey;
                 }
 
                 return firstVisibleWindow ?: targetScene.windows.firstObject ?: fallbackWindow;
-            }
+            } */
         }
-    }
+    // }
 
     return fallbackWindow;
 }

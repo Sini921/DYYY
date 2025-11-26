@@ -814,9 +814,9 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
           [[manager taskProgressMap] setObject:@(0.0) forKey:imageDownloadID];
 
           // 使用系统API观察进度 (iOS 11+)
-          if (@available(iOS 11.0, *)) {
+          // if (@available(iOS 11.0, *)) {
               [imageTask.progress addObserver:manager forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:(__bridge void *)(imageDownloadID)];
-          }
+          // }
       }
 
       // 下载视频
@@ -839,9 +839,9 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
           [[manager taskProgressMap] setObject:@(0.0) forKey:videoDownloadID];
 
           // 使用系统API观察进度 (iOS 11+)
-          if (@available(iOS 11.0, *)) {
+          // if (@available(iOS 11.0, *)) {
               [videoTask.progress addObserver:manager forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:(__bridge void *)(videoDownloadID)];
-          }
+          // }
       }
 
       // 启动下载任务
@@ -857,14 +857,14 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
         }
 
         // 移除进度观察
-        if (@available(iOS 11.0, *)) {
+        // if (@available(iOS 11.0, *)) {
             if ([imageTask respondsToSelector:@selector(progress)]) {
                 [imageTask.progress removeObserver:manager forKeyPath:@"fractionCompleted"];
             }
             if ([videoTask respondsToSelector:@selector(progress)]) {
                 [videoTask.progress removeObserver:manager forKeyPath:@"fractionCompleted"];
             }
-        }
+        // }
 
         // 检查文件是否真的存在
         BOOL imageExists = [[NSFileManager defaultManager] fileExistsAtPath:imagePath];
@@ -877,9 +877,9 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
         if (downloadSucceeded) {
             @try {
                 // 添加iOS版本检查
-                if (@available(iOS 15.0, *)) {
+                // if (@available(iOS 15.0, *)) {
                     [[DYYYManager shared] saveLivePhoto:imagePath videoUrl:videoPath];
-                }
+                // }
             } @catch (NSException *exception) {
                 // 删除失败的文件
                 [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
@@ -1623,7 +1623,7 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
 // MARK: 以下都是创建保存实况的调用方法
 - (void)saveLivePhoto:(NSString *)imageSourcePath videoUrl:(NSString *)videoSourcePath {
     // 首先检查iOS版本
-    if (@available(iOS 15.0, *)) {
+    // if (@available(iOS 15.0, *)) {
         // iOS 15及更高版本使用原有的实现
         NSURL *photoURL = [NSURL fileURLWithPath:imageSourcePath];
         NSURL *videoURL = [NSURL fileURLWithPath:videoSourcePath];
@@ -1661,11 +1661,11 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
                             }];
                       }];
         }];
-    } else {
+    /* } else {
         dispatch_async(dispatch_get_main_queue(), ^{
           [DYYYUtils showToast:@"当前iOS版本不支持实况照片，将分别保存图片和视频"];
         });
-    }
+    } */
 }
 
 - (void)useAssetWriter:(NSURL *)photoURL video:(NSURL *)videoURL identifier:(NSString *)identifier complete:(void (^)(BOOL success, NSString *photoFile, NSString *videoFile, NSError *error))complete {
@@ -1845,9 +1845,9 @@ static void CGContextCopyBytes(CGContextRef dst, CGContextRef src, int width, in
 
     // 检查iOS版本是否支持实况照片
     BOOL supportsLivePhoto = NO;
-    if (@available(iOS 15.0, *)) {
+    // if (@available(iOS 15.0, *)) {
         supportsLivePhoto = YES;
-    }
+    // }
 
     if (!supportsLivePhoto) {
         dispatch_async(dispatch_get_main_queue(), ^{

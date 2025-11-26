@@ -442,11 +442,11 @@ void initTargetClassNames(void) {
         [self saveLockState];
         NSString *toastMessage = self.isLocked ? @"按钮已锁定" : @"按钮已解锁";
         [DYYYUtils showToast:toastMessage];
-        if (@available(iOS 10.0, *)) {
+        // if (@available(iOS 10.0, *)) {
             UIImpactFeedbackGenerator *generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
             [generator prepare];
             [generator impactOccurred];
-        }
+        // }
     }
 }
 - (void)hideUIElements {
